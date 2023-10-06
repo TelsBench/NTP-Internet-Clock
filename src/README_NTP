@@ -1,0 +1,82 @@
+/*
+MIT License
+
+Copyright (c) [2023] [TEL at @TELsBench channel on youtube]
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+
+# INTERNET CLOCK USING NET ENABLED ARDUINO MICROCONTROLLER
+
+# The Basics
+We are going to use a ESP-32 Dev-kit to do this project in as that is what I had readilly available at the time, but any networked enabled Arduino platform compatible controller will be fine although the connections will change in the wiring.
+
+The object of the project is to make a Clock which can always be on time that has a Switch to add an offset for the DST and settable timezoneoffset you are in. For me in the UK, the offset is 1 hour during summer time or (Daylight Savings ) depending on what part of the world you are in this may be different.
+
+The clock will synchronise to a NNTP server in your region every 24 hours.
+
+##Constraints
+This version of the clock will have some manual intervention for the following items.
+
+- Initial SSID and Password, and DST offset for your router via programming only.
+- A Manual switch to turn on the offset or on for DST
+- The Display Class is Set to a Specific Size of Display -> <Adafruit_ST7735.h>  However this can be changed if you want a different display with a few modifications, although larger displays will likely need a more able power source than the 3.3v supply offered by the ESP32, in this case there will need to be a rethink about the use connection into the box as unpluggable and a detachable power input line perhaps. 
+
+## Prerequisites ( Know How )
+
+ You should have a basic understanding of how to create an arduino project. I you do not, some research will be desireable first, but you could still hammer through this and do research as you go, but it is not recomended and it is advised to go through some simple program examples first.
+
+ This code is written in C++ on Visual Studio Code IDE from Microsoft which is free, but it uses the Platform IO which enables Arduino based development much easier than the Arduino IDE. However, if you want to use the Arduino IDE, then you can do so and it will still work fine.
+
+ If you dont know C++ well, then you will still be able to create this project as no programming as such will be needed unless you wish to make modifications, only your router sign on, and NNTP server hostname will be needed
+
+## Tools
+
+ This project required you to have access  to :-
+- Solder/Soldering iron
+- Veroboard 
+- The OLED display mentioned Adafruit_ST7735
+- A Slide or Pushbutton on/off switch
+- A USB A to Micro USB ( depending on the dev kit you buy) cable to  - connect your Arduino Devkit to the computer.
+- A computer with either Arduino IDE or Visual Studio Code installed.
+- A basic understanding of wiring, soldering , a computer.
+
+##COMPONENT COSTS
+
+The breakdown of the basic components should be somthing like this at the time of writing.
+
+# WIRING DIAGRAM
+
+![alt text](images/WIRING-DIAGRAM-ESP32-ST7735.png)
+
+
+# The Box
+
+You can buy these ABS black plastic boxed cheap anywhere really and at a low cost.
+
+here are some pictures of the finished project.
+
+![alt text](images/FRONT%20(2023_09_23%2010_53_02%20UTC).jpg)
+
+![alt text](images/COMPONENTS_OVERVIEW.png)
+![alt text](images/BOX-DIMENSIONS%20(2023_09_23%2010_53_02%20UTC).png)
+
+
+
