@@ -41,9 +41,9 @@ MyDisplay myScreen;
 #define ntpServer1 "europe.pool.ntp.org"
 
 //Daylight Saving Offset & TimeZoneOffset Seconds
-#define offsetSeconds 3600 
+#define daylightSavingsffsetSeconds 3600 
 #define timeZoneOffsetSeconds  0
-#define totalOffsetSeconds  timeZoneOffsetSeconds + offsetSeconds
+#define totalOffsetSeconds  timeZoneOffsetSeconds + daylightSavingsffsetSeconds
 
 //Period Between NTP Syncs
 #define millisecondsBetweenNTPSyncs 10800000 //3 hours
@@ -137,7 +137,7 @@ void setup(void) {
    }
 
   //Setup the time client, Syncs with NTP Server every 3 Hours normally. which is too often, so extend to 24 hours worth of milliseconds.
-  timeClient = NTPClient(ntpUDP, ntpServer1, 0, millisecondsBetweenNTPSyncs); 
+  timeClient = NTPClient(ntpUDP, ntpServer1, timeZoneOffsetSeconds, millisecondsBetweenNTPSyncs); 
   timeClient.begin();
 
 }
