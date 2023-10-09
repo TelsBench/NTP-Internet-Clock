@@ -7,3 +7,4 @@ platformio.ini
 .vscode/extensions.json
 /include/README
 /lib/README
+credentials
