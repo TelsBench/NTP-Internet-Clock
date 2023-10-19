@@ -27,26 +27,32 @@ SOFTWARE.
 #include <WiFiUdp.h>
 #include "Myhelpers.h"
 #include "MyDisplay.h"
+#include "MyConfig.h"
+
+
 
 //private lib declarations under the project directory hence the quote marks for a local search.
 MyHelpers myHelpers;
 MyDisplay myScreen;
+MyConfig config;
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP);
 
 /*   DEFINES    */
 //Router
-#define ssid  "SSID"
-#define password "PASSWORD"
+// #define ssid  "BTHub6-6GWX"
+// #define password "KadLn3rJwX6r"
 
-//NTP Server
-#define ntpServer1 "europe.pool.ntp.org"
+// //NTP Server
+// #define ntpServer1 "europe.pool.ntp.org"
 
-//Daylight Saving Offset & TimeZoneOffset Seconds
-#define daylightSavingsffsetSeconds 3600 
-#define timeZoneOffsetSeconds  0
-#define totalOffsetSeconds  timeZoneOffsetSeconds + daylightSavingsffsetSeconds
+// //Daylight Saving Offset & TimeZoneOffset Seconds
+// #define daylightSavingsffsetSeconds 3600 
+// #define timeZoneOffsetSeconds  0
+// #define totalOffsetSeconds  timeZoneOffsetSeconds + daylightSavingsffsetSeconds
 
-//Period Between NTP Syncs
-#define millisecondsBetweenNTPSyncs 10800000 //3 hours
+// //Period Between NTP Syncs
+// #define millisecondsBetweenNTPSyncs 10800000 //3 hours
 #define DST_SWITCH  GPIO_NUM_0  // Daylight Saving Switch input GPIO Pin.
 
 // Main Loop Control
@@ -58,9 +64,6 @@ bool showColon = true;
 //Inital State of LASTKnownDSTSwitch
 int  LastKnownDSTSWITCH=LOW;
 
-//NTP Setup
-WiFiUDP ntpUDP;
-NTPClient timeClient = NTPClient(ntpUDP,"",0);
 
 /***************************************************/
 
@@ -73,7 +76,7 @@ bool GetConncted(){
    WiFi.setHostname(hostname.c_str());
 
   //Future Revisions will set this via the web
-  WiFi.begin(ssid, password);  
+  WiFi.begin(config.GetSSID(), config.GetSSIDPassword());  
    
   while(CONNECT_TRY_COUNT++<GETTING_CONNECTED_MAX_TRIES){
      int count=0;
@@ -97,13 +100,27 @@ bool GetConncted(){
 
 void setup(void) {
 
+  //Enables debugging print statements
+   Serial.begin(115200);
 
 
+ 
+   //Get Config either from the web or from stored in EEPROM.
+   EEPROM.begin(1024);
+   if(!config.ConfigExists()){
+      Serial.println("** MAKING FIRST TIME CONFIG ");
+      config.ClearEEPROM();
+      config.CreateDefaultConfig();
+      EEPROM.writeInt(0,ConfigNumber);
+      config.WriteConfigToEEPROM();
+   }
+   config.ReadConfigFromEEPROM();
+   config.DumpEEPROM(1024);
+   config.DisplaySettings();
   //Daylight Savings Switch, no need for an external pullup resitor.
   pinMode(DST_SWITCH,INPUT_PULLUP); 
   
-  //Enables debugging print statements
-  Serial.begin(115200);
+
 
   //Setup Screen and Config.
   myScreen.tftSetup();
@@ -123,6 +140,8 @@ void setup(void) {
     myScreen.displayConnectStatus(myHelpers.string2char(message));
   }
 
+
+   //Attempt Connection.
    if(!GetConncted()) 
    {
       Serial.println("**FATAL ERROR** - COULD NOT GET CONNECTED ");
@@ -133,13 +152,11 @@ void setup(void) {
    else
    {
       //Success - tell the user the good news , 'Connected'
-      myScreen.displayConnectStatus(myHelpers.string2char("Connected."));
+      myScreen.displayConnectStatus(myHelpers.string2char("WIFI Connected."));
+      NTPClient timeClient(ntpUDP,config.GetNTPServer());
+      timeClient.begin();
+
    }
-
-  //Setup the time client, Syncs with NTP Server every 3 Hours normally. which is too often, so extend to 24 hours worth of milliseconds.
-  timeClient = NTPClient(ntpUDP, ntpServer1, timeZoneOffsetSeconds, millisecondsBetweenNTPSyncs); 
-  timeClient.begin();
-
 }
 
 //During summer Offset needs to be applied to the time. IE Winter @6PM changes to 7PM after summer tranition.
@@ -147,6 +164,8 @@ void setup(void) {
 void DSTCHECK(){
    myScreen.clearScreen();
    int currentDSTSwitchState =  digitalRead(DST_SWITCH);
+
+   long totalOffsetSeconds = config.GetDstOffsetSeconds() + config.GetTimeZoneOffsetSeconds();
 
    //Display DST Switch position.
    if( digitalRead(DST_SWITCH)==HIGH) 
@@ -157,7 +176,7 @@ void DSTCHECK(){
    else
    {
        myScreen.displayConnectStatus(myHelpers.string2char("Daylight savings-OFF"));
-        timeClient.setTimeOffset(timeZoneOffsetSeconds); 
+        timeClient.setTimeOffset(config.GetTimeZoneOffsetSeconds()); 
    }
    LastKnownDSTSWITCH = currentDSTSwitchState;
 
@@ -172,6 +191,7 @@ void DSTCHECK(){
 
 
 void loop() {
+
 
   //DSTCHECK on Startup or when Position Changes of DST Swtich.
   if( firstTime || (LastKnownDSTSWITCH != digitalRead(DST_SWITCH))) 

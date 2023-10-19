@@ -6,7 +6,7 @@
  MyConfig::MyConfig()
  {
 
-   
+
 
  };
 
@@ -48,8 +48,9 @@ void MyConfig::WriteConfigToEEPROM()
     Serial.println("WRITING JSON DOC TO EEPROM");
     EepromStream eepromStream(EEPROM_OFFSET, EEPROM.length());
     serializeJson(jsonDoc, eepromStream);
-    
+
     EEPROM.commit();
+    this->ReadConfigFromEEPROM();
 };
  String MyConfig::ReadConfigFromEEPROM()
 {
