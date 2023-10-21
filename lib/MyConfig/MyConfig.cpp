@@ -23,14 +23,20 @@ void MyConfig::ClearEEPROM()
 bool MyConfig::ConfigExists(){
  return ConfigNumber==EEPROM.readInt(0);
 }
+
+bool MyConfig::HasCredentials()
+{
+   return (this->GetSSID()!="" && this->GetSSIDPassword()!="");
+}
+
 void MyConfig::CreateDefaultConfig()
  {
       Serial.println("CREATING DEFAULT CONFIG");
       if(EEPROM.read(configEpromAddress)==0xFF)
       {
         jsonDoc[Keys_SETUP_PASSWORD] = "biteme";       
-        jsonDoc[Keys_SSID] = "BTHub6-6GWX";
-        jsonDoc[Keys_SSID_PASSWORD] = "KadLn3rJwX6r";
+        jsonDoc[Keys_SSID] = "";
+        jsonDoc[Keys_SSID_PASSWORD] = "";
         jsonDoc[Keys_NTP_SERVER1] = "europe.pool.ntp.org";     
         jsonDoc[Keys_NTP_INTERVAL_MILLIS] = 86400000;        
         jsonDoc[Keys_TIMEZONE_OFFSET_SECONDS] = 0;

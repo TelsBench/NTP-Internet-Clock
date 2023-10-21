@@ -42,6 +42,7 @@ class MyConfig
     void          DisplaySettings();
     void          DumpEEPROM(int len);
     bool          ConfigExists();
+    bool          HasCredentials();
 
 };
 
