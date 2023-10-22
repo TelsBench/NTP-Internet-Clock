@@ -28,6 +28,7 @@ SOFTWARE.
 #include "Myhelpers.h"
 #include "MyDisplay.h"
 #include "MyConfig.h"
+#include "SoftAP.h"
 
 
 
@@ -43,16 +44,6 @@ NTPClient timeClient(ntpUDP);
 // #define ssid  "BTHub6-6GWX"
 // #define password "KadLn3rJwX6r"
 
-// //NTP Server
-// #define ntpServer1 "europe.pool.ntp.org"
-
-// //Daylight Saving Offset & TimeZoneOffset Seconds
-// #define daylightSavingsffsetSeconds 3600 
-// #define timeZoneOffsetSeconds  0
-// #define totalOffsetSeconds  timeZoneOffsetSeconds + daylightSavingsffsetSeconds
-
-// //Period Between NTP Syncs
-// #define millisecondsBetweenNTPSyncs 10800000 //3 hours
 #define DST_SWITCH  GPIO_NUM_0  // Daylight Saving Switch input GPIO Pin.
 
 // Main Loop Control
@@ -66,6 +57,8 @@ int  LastKnownDSTSWITCH=LOW;
 
 
 /***************************************************/
+
+
 
 bool GetConncted(){
 
@@ -103,6 +96,11 @@ void setup(void) {
   //Enables debugging print statements
    Serial.begin(115200);
 
+   SoftAP softserver;
+
+   softserver.StartServer();
+
+   while(1){};
 
  
    //Get Config either from the web or from stored in EEPROM.
