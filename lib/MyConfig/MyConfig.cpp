@@ -34,7 +34,7 @@ void MyConfig::CreateDefaultConfig()
       Serial.println("CREATING DEFAULT CONFIG");
       if(EEPROM.read(configEpromAddress)==0xFF)
       {
-        jsonDoc[Keys_SETUP_PASSWORD] = "biteme";       
+   
         jsonDoc[Keys_SSID] = "";
         jsonDoc[Keys_SSID_PASSWORD] = "";
         jsonDoc[Keys_NTP_SERVER1] = "europe.pool.ntp.org";     
@@ -79,7 +79,6 @@ void MyConfig::DisplaySettings()
     Serial.println("==========================");
     Serial.println(String("SSID........................: ") + GetSSID());
     Serial.println(String("SSID Password.............. : ") + GetSSIDPassword());
-    Serial.println(String("Setup Password..............: ") + GetSetupPassword());
     Serial.println(String("NTPServer...................: ") + GetNTPServer());
     Serial.println(String("TimeZone Offset MilliSeconds: ") + GetTimeZoneOffsetSeconds());
     Serial.println(String("DST Offset Seconds..........: ") + GetDstOffsetSeconds());
@@ -120,10 +119,7 @@ long MyConfig::GetNtpIntervalMillis()
 {
   return this->jsonDoc[Keys_NTP_INTERVAL_MILLIS];
 }
-const char* MyConfig::GetSetupPassword()
-{
-  return this-> jsonDoc[Keys_SETUP_PASSWORD];
-}
+
 const char* MyConfig::GetVersionNumber()
 {
   return this-> jsonDoc[Keys_VersionNumber];

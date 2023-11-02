@@ -29,6 +29,7 @@ SOFTWARE.
 #include "MyDisplay.h"
 #include "MyConfig.h"
 #include "SoftAP.h"
+#include <WebSockets.h>
 
 
 
@@ -96,11 +97,17 @@ void setup(void) {
   //Enables debugging print statements
    Serial.begin(115200);
 
-   SoftAP softserver;
 
+
+   SoftAP softserver;
+   WiFi.setMinSecurity(WIFI_AUTH_WPA2_WPA3_PSK); //This is important as we are passing the router credentials over the air.
    softserver.StartServer();
 
-   while(1){};
+   // while(1)
+   // {  
+   //    delay(2000);
+   //    softserver.SendSocketEvent(testJsonConfig);
+   // };
 
  
    //Get Config either from the web or from stored in EEPROM.

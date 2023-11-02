@@ -4,14 +4,15 @@
 #include <WiFiUdp.h>
 #include <StreamUtils.h>
 
-#define Keys_SETUP_PASSWORD "SetupPassword"       
-#define Keys_SSID "SSID"
-#define Keys_SSID_PASSWORD "SSPassword"
-#define Keys_NTP_SERVER1  "NTPServer"
+     
+#define Keys_SSID "ssid"
+#define Keys_SSID_PASSWORD "sspassword"
+#define Keys_NTP_SERVER1  "ntpurl"
 #define Keys_NTP_INTERVAL_MILLIS  "ntpIntervalMillis"       
-#define Keys_TIMEZONE_OFFSET_SECONDS  "timeZoneOffsetSeconds"
-#define Keys_DST_OFFSET_SECONDS  "dstOffsetSeconds" 
-#define Keys_VersionNumber  "VersionNumber"    
+#define Keys_TIMEZONE_OFFSET_SECONDS  "timezoneoffsetseconds"
+#define Keys_DST_OFFSET_SECONDS  "dstoffsetseconds" 
+#define Keys_VersionNumber  "versionnumber"  
+
 
 #define ConfigNumber  2012709
 #define EEPROM_OFFSET 10
@@ -33,10 +34,10 @@ class MyConfig
     const char*   GetSSID();
     const char*   GetSSIDPassword();
     const char*   GetNTPServer();
+    const char*   GetTimeZoneIdString();
     int           GetTimeZoneOffsetSeconds();
     int           GetDstOffsetSeconds();
     long          GetNtpIntervalMillis();
-    const char*   GetSetupPassword();
     const char*   GetVersionNumber();
     bool          SetConfig(String configString);
     void          DisplaySettings();
