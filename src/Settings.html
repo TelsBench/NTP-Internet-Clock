@@ -1,14 +1,12 @@
 ﻿<!DOCTYPE html>
 <html>
     <head>
+        <link rel='icon' href='data:;base64,iVBORw0KGgo='>
         <meta charset='utf-8' />
         <title>ESP32TELs NTP CLOCK Settings</title>
         <style>
             html {
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            }
-
-            h1 {
             }
 
             table th, td {
@@ -62,10 +60,27 @@
         </style>
         <script type='text/javascript'>
             var Socket;
-            function init(event) {
+            function init() {
                 console.log('im in Init');
-                Socket = new WebSocket('ws://' + '192.168.4.1' + ':81/');
-                Socket.onmessage = function (event) {setData(event.data); };
+             
+                Socket = new WebSocket('ws://' + '192.168.1.192' + ':81/');
+                Socket.onmessage = function (event) {   console.log(event.data);setData(event.data); };
+            };
+
+
+            function ShowRebootMsg()
+            {
+                document.getElementById('msg').style.display='table-cell';
+
+            };
+
+            function submitData() 
+            {
+                console.log('Im in SendData');
+                
+                //** THIS NEED TO SEND BACK THE CURRENT STATE OF THE WEB PAGE VARS **//
+                Socket.send('Sending back some random stuff');
+                ShowRebootMsg();
             };
 
             function setData(jsonString) {
@@ -82,13 +97,14 @@
                 };
             };
 
-            window.onload = init;
+            window.onload =  init();
+
         </script>
     </head>
     <body>
         <Content-type:text html>
             <h1 id=title>TEL&apos;s ESP32 NTP CLOCK </h1>
-            <table id='tblSettings' border='1' style='border:Solid 1pt black;border-collapse:collapse;padding:19px'>
+            <table id='tblSettings' style='border:Solid 1pt black;border-collapse:collapse;padding:19px'>
                 <thead></thead>
                 <tbody>
                     <tr>
@@ -214,10 +230,13 @@
                     <tr>
                         <td>Version No</td>
                         <td><input id='versionnumber' readonly placeholder='Version1.1 ' /></td>
-                    </tr>
+                   </tr>                    
                     <tr>
+                        <td id='msg' colspan=2 style='background-color:#ffffff; color:rgb(252, 0, 0);text-align:center;font-weight:bold;font-size:20px;display:none;' >Saved - Rebooting Clock - * Check Clock Display *</td>  
+                     </tr> 
+                    <tr> 
                         <td></td>
-                        <td id='tdButton'><button type='button' onclick='testJsonInit();'>SUBMIT</button></td>
+                        <td id='tdButton'><button type='button' onclick='submitData();'>SUBMIT</button></td>
                     </tr>
                 </tbody>
             </table>
