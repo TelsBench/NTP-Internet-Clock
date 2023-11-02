@@ -71,20 +71,30 @@
             function ShowRebootMsg()
             {
                 document.getElementById('msg').style.display='table-cell';
-
             };
 
-            function submitData() 
+            function submitData()
             {
-                console.log('Im in SendData');
+                var data = {};
+                data.ssid=document.getElementById('ssid').value;
+                data.sspassword=document.getElementById('sspassword').value;
+                data.ntpurl=document.getElementById('ntpurl').value;
+                data.ntpintervalmillis=document.getElementById('ntpintervalmillis').value;
+                data.timezoneoffsetseconds=document.getElementById('timezoneoffsetseconds').value;
+                data.dstoffsetseconds=document.getElementById('dstoffsetseconds').value;
+                data.versionnumber=document.getElementById('versionnumber').value;
                 
-                //** THIS NEED TO SEND BACK THE CURRENT STATE OF THE WEB PAGE VARS **//
-                Socket.send('Sending back some random stuff');
+                var jsonString = JSON.stringify(data);
+
+                console.log('Sending Back this :' + jsonString);
+                Socket.send(jsonString);
+
                 ShowRebootMsg();
             };
 
-            function setData(jsonString) {
-                console.log('Message Received : ' + jsonString);
+            function setData(jsonString) 
+            {
+                console.log('Set Data ' + jsonString);
                 var jsonData = JSON.parse(jsonString).data;
                 for (var key in jsonData)
                 {
@@ -93,11 +103,13 @@
                         console.log(key + ':' + jsonData[key]);
                         document.getElementById(key).value = jsonData[key];
                     }
-                    else console.log('Error : ' + key + ' Not Found !');
+                    else 
+                    console.log('Error : ' + key + ' Not Found !');
                 };
+
             };
 
-            window.onload =  init();
+            window.onload =  init;
 
         </script>
     </head>
