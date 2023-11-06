@@ -8,7 +8,7 @@
 #define Keys_SSID "ssid"
 #define Keys_SSID_PASSWORD "sspassword"
 #define Keys_NTP_SERVER1  "ntpurl"
-#define Keys_NTP_INTERVAL_MILLIS  "ntpIntervalMillis"       
+#define Keys_NTP_INTERVAL_MILLIS  "ntpintervalmillis"       
 #define Keys_TIMEZONE_OFFSET_SECONDS  "timezoneoffsetseconds"
 #define Keys_DST_OFFSET_SECONDS  "dstoffsetseconds" 
 #define Keys_VersionNumber  "versionnumber"  
@@ -34,12 +34,11 @@ class MyConfig
     const char*   GetSSID();
     const char*   GetSSIDPassword();
     const char*   GetNTPServer();
-    const char*   GetTimeZoneIdString();
     int           GetTimeZoneOffsetSeconds();
     int           GetDstOffsetSeconds();
     long          GetNtpIntervalMillis();
     const char*   GetVersionNumber();
-    bool          SetConfig(String configString);
+    bool          SetConfig(uint8_t* buffer, size_t length);
     void          DisplaySettings();
     void          DumpEEPROM(int len);
     bool          ConfigExists();

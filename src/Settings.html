@@ -95,7 +95,7 @@
             function setData(jsonString) 
             {
                 console.log('Set Data ' + jsonString);
-                var jsonData = JSON.parse(jsonString).data;
+                var jsonData = JSON.parse(jsonString);
                 for (var key in jsonData)
                 {
                     if (jsonData.hasOwnProperty(key))

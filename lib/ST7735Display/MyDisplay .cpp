@@ -61,6 +61,13 @@ void MyDisplay::displayTimeString( char* timeStr ){
   tft->print(timeStr);  
 }
 
+void MyDisplay::displayResetting(){
+  tft->setTextColor(ST7735_RED, ST7735_BLACK);
+  tft->setCursor(22, 8);   
+  tft->setTextSize(3);
+  tft->print("RESETTING");  
+}
+
 void MyDisplay::displayDateInfoString( char* dateInfoStr ){
   tft->setTextColor(ST7735_CYAN, ST7735_BLACK);
   tft->setCursor(10, 80);   
@@ -74,3 +81,24 @@ void MyDisplay::updateScreen(unsigned long epochTime, uint8_t day, bool showColo
     displayTimeString(myHelpers.string2char(currentTime));
     displayDateInfoString(myHelpers.string2char(currentDateInfo));
 }
+
+ void MyDisplay::displayRemoteConfig( String ipAddress ){
+  //Initial Setup
+
+  Serial.println("** IN INITIAL SETUP **");
+  clearScreen();
+  tftSetup();
+
+  //Print Browser Logon
+  tft->fillRect(0,8,160,8,ST77XX_BLACK);
+  tft->setTextColor(ST7735_GREEN, ST7735_BLACK);
+  tft->setCursor(5, 8);   
+  tft->setTextSize(1);
+  tft->print("** LOGON BROWSER **");  
+
+  //Print IP Address.
+  tft->setCursor(5, 16);   
+  tft->setTextSize(1);
+  tft->print(ipAddress);  
+
+ }

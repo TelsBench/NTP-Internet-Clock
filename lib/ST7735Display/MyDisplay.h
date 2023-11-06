@@ -33,6 +33,7 @@ SOFTWARE.
 
 
 
+
 class MyDisplay{
 
 //AZ Delivery SPI - TFT-T7735 using  *AZ-DELIVERY ESP32-WROOM DEV KIT*
@@ -63,6 +64,8 @@ class MyDisplay{
     void displayTimeString( char* timeStr );
     void displayDateInfoString( char* dateInfoStr );
     void updateScreen(unsigned long epochTime, uint8_t day, bool showColon);
+    void displayResetting();
+    void displayRemoteConfig(String ipAddress);
 
 };
 
