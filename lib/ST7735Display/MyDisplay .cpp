@@ -27,26 +27,26 @@ SOFTWARE.
 #include "MyHelpers.h"
 #include "MyDisplay.h"
 
-MyDisplay::MyDisplay(){
-
+MyDisplay::MyDisplay()
+{
  tft = new ::Adafruit_ST7735(TFT_CS,TFT_DC,TFT_RST);
-
 }
 
-void MyDisplay::clearScreen(){
-
+void MyDisplay::clearScreen()
+{
     tft->fillScreen(ST7735_BLACK);
 }
 
-
-void MyDisplay::tftSetup(){  
+void MyDisplay::tftSetup()
+{  
  tft->initR(INITR_BLACKTAB);
  tft->setRotation(3);
  tft->fillScreen(ST7735_BLACK);
  tft->setTextWrap(false);
 }
 
-void MyDisplay::displayConnectStatus( char* status ){
+void MyDisplay::displayConnectStatus( char* status )
+{
   tft->fillRect(0,8,160,8,ST77XX_BLACK);
   tft->setTextColor(ST7735_GREEN, ST7735_BLACK);
   tft->setCursor(5, 8);   
@@ -54,37 +54,40 @@ void MyDisplay::displayConnectStatus( char* status ){
   tft->print(status);  
 }
 
-void MyDisplay::displayTimeString( char* timeStr ){
+void MyDisplay::displayTimeString( char* timeStr )
+{
   tft->setTextColor(ST7735_RED, ST7735_BLACK);
   tft->setCursor(22, 8);   
   tft->setTextSize(4);
   tft->print(timeStr);  
 }
 
-void MyDisplay::displayResetting(){
+void MyDisplay::displayResetting()
+{
   tft->setTextColor(ST7735_RED, ST7735_BLACK);
   tft->setCursor(22, 8);   
   tft->setTextSize(3);
   tft->print("RESETTING");  
 }
 
-void MyDisplay::displayDateInfoString( char* dateInfoStr ){
+void MyDisplay::displayDateInfoString( char* dateInfoStr )
+{
   tft->setTextColor(ST7735_CYAN, ST7735_BLACK);
   tft->setCursor(10, 80);   
   tft->setTextSize(2);
   tft->print(dateInfoStr);  
 }
 
-void MyDisplay::updateScreen(unsigned long epochTime, uint8_t day, bool showColon){
+void MyDisplay::updateScreen(unsigned long epochTime, uint8_t day, bool showColon)
+{
     String currentTime = myHelpers.getTimeStampString(epochTime,showColon);
     String  currentDateInfo = myHelpers.getDateInfoString(epochTime,day);
     displayTimeString(myHelpers.string2char(currentTime));
     displayDateInfoString(myHelpers.string2char(currentDateInfo));
 }
 
- void MyDisplay::displayRemoteConfig( String ipAddress ){
-  //Initial Setup
-
+ void MyDisplay::displayRemoteConfig( String ipAddress )
+ {
   Serial.println("** IN INITIAL SETUP **");
   clearScreen();
   tftSetup();
@@ -100,5 +103,22 @@ void MyDisplay::updateScreen(unsigned long epochTime, uint8_t day, bool showColo
   tft->setCursor(5, 16);   
   tft->setTextSize(1);
   tft->print(ipAddress);  
+ }
 
+ void MyDisplay::displayRebootInfo()
+ {
+  Serial.println("** IN INITIAL SETUP **");
+  clearScreen();
+  tftSetup();
+
+  //Print Browser Logon
+  tft->fillRect(0,8,160,8,ST77XX_BLACK);
+  tft->setTextColor(ST7735_GREEN, ST7735_BLACK);
+  tft->setCursor(5, 8);   
+  tft->setTextSize(1);
+  tft->print("#1 Comp/Fone to regular WiFi *");  
+  tft->setCursor(5, 16);   
+  tft->setTextSize(1);
+  tft->print("#2 Prss Cfg Btn->reboot Clock");  
+  return;
  }

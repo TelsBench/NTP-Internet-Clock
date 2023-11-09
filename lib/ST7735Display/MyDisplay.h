@@ -31,15 +31,10 @@ SOFTWARE.
 #include <SPI.h>             //Serial Peripheral Interface
 #include "MyHelpers.h"
 
-
-
-
 class MyDisplay{
 
 //AZ Delivery SPI - TFT-T7735 using  *AZ-DELIVERY ESP32-WROOM DEV KIT*
 //===========================================
-
-
   private:
                                     //TOP TO BOTTOM
                                     //===============
@@ -51,12 +46,10 @@ class MyDisplay{
     #define TFT_CS    GPIO_NUM_5    // GRAY   - CS   GPIO_5
                                     // WHITE  - GND GND
                                     // BLACK  - VCC 3.3V
-
   MyHelpers myHelpers;
   Adafruit_ST7735 * tft;
 
   public:
-
     MyDisplay( );
     void clearScreen();
     void tftSetup();
@@ -66,7 +59,7 @@ class MyDisplay{
     void updateScreen(unsigned long epochTime, uint8_t day, bool showColon);
     void displayResetting();
     void displayRemoteConfig(String ipAddress);
-
+    void displayRebootInfo();
 };
 
 #endif

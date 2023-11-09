@@ -45,7 +45,7 @@ NTPClient timeClient(ntpUDP);
 // #define ssid  "BTHub6-6GWX"
 // #define password "KadLn3rJwX6r"
 
-#define DST_SWITCH  GPIO_NUM_0  // Daylight Saving Switch input GPIO Pin.
+#define DST_SWITCH  GPIO_NUM_19  // Daylight Saving Switch input GPIO Pin.
 #define DO_CONFIG   GPIO_NUM_15 // Press before power, clock will go into SoftAP mode and allow config via a web browser.
 
 // Main Loop Control
@@ -95,25 +95,35 @@ bool GetConncted(){
 
 void setup(void) {
 
+   pinMode(DO_CONFIG,INPUT_PULLUP);
+   pinMode(DST_SWITCH,INPUT_PULLUP); 
+
   //Enables debugging print statements
    Serial.begin(115200);
 
    EEPROM.begin(1024);
    
    //Clear, Dump and Wait
-   //config.ClearEEPROM();
+   // config.ClearEEPROM();
+   // while(1){};
+
    Serial.println("** STARTUP EEPROM DUMP");
    config.DumpEEPROM(500);
    //Serial.println("** STOPPED - main.cpp#103 Comment for normal ops");while(1){}; 
 
-   pinMode(GPIO_NUM_15,INPUT_PULLUP);
    //When power applied if button depressed, clock will go into softAP mode for config from web browser
-   bool doRemoteConfig = !digitalRead(GPIO_NUM_15);
+   bool doRemoteConfig = !digitalRead(DO_CONFIG);
    if(doRemoteConfig || !config.ConfigExists() || !config.HasCredentials()){
-      Serial.println("** Creating A default config **");
-      config.ClearEEPROM();
-      config.CreateDefaultConfig();
-      config.WriteConfigToEEPROM(); 
+
+      //Only clear the EEPROM if there is no config. or no credentials.
+      if(doRemoteConfig==false)
+      {
+         Serial.println("** Creating A default config **");
+         config.ClearEEPROM();
+         config.CreateDefaultConfig();
+         config.WriteConfigToEEPROM(); 
+      }
+
       SoftAP softserver(myScreen);
       WiFi.setMinSecurity(WIFI_AUTH_WPA2_WPA3_PSK); //This is important as we are passing the router credentials over the air.
       softserver.StartServer();
@@ -122,11 +132,13 @@ void setup(void) {
 
 
    config.ReadConfigFromEEPROM();
+    
    config.DumpEEPROM(1024);
+ 
    config.DisplaySettings();
-  //Daylight Savings Switch, no need for an external pullup resitor.
-  pinMode(DST_SWITCH,INPUT_PULLUP); 
   
+
+
   //Setup Screen and Config.
   myScreen.tftSetup();
   myScreen.clearScreen();
@@ -169,8 +181,10 @@ void setup(void) {
 void DSTCHECK(){
    myScreen.clearScreen();
    int currentDSTSwitchState =  digitalRead(DST_SWITCH);
-
+   
    long totalOffsetSeconds = config.GetDstOffsetSeconds() + config.GetTimeZoneOffsetSeconds();
+
+   Serial.println("** TIMEZONE SECONDS :" + config.GetTimeZoneOffsetSeconds());
 
    //Display DST Switch position.
    if( digitalRead(DST_SWITCH)==HIGH) 

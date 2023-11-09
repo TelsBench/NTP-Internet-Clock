@@ -1,0 +1,38 @@
+<html>
+<head>
+
+  <script>
+
+
+    function init()
+    { 
+        console.log('im in Init, init man');
+        zone.value=1;
+
+        var selBox   = document.getElementById("zone");
+        selBox.value=11;
+    
+
+        // console.log("Selected Value : " + msgBox.value);
+        // msgBox.value=selBox.value;
+     
+    };
+
+    window.onload =  init;
+    
+   </script>
+</head>
+<body>
+
+    <select id="zone" value="2">
+        <option value="11">Minus One</option>
+        <option value="5">Five</option>
+        <option value="2">Two</option>
+    </select>
+
+
+
+</body>
+
+
+</html>

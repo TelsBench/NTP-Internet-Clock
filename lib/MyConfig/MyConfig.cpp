@@ -3,12 +3,7 @@
 #include <EEPROM.h>
 
 //Default Constructor
- MyConfig::MyConfig()
- {
-
-
-
- };
+ MyConfig::MyConfig(){};
 
 void MyConfig::ClearEEPROM()
  {
@@ -53,7 +48,6 @@ void MyConfig::WriteConfigToEEPROM()
     Serial.println("WRITING JSON DOC TO EEPROM");
     EepromStream eepromStream(EEPROM_OFFSET, EEPROM.length());
     serializeJson(jsonDoc, eepromStream);
-
     EEPROM.commit();
     this->ReadConfigFromEEPROM();
 };
@@ -63,14 +57,10 @@ void MyConfig::WriteConfigToEEPROM()
     EepromStream eepromStream(EEPROM_OFFSET, EEPROM.length());
     jsonDoc.clear();
     deserializeJson(jsonDoc, eepromStream);
-
     String  output;
     serializeJson(jsonDoc,output);
-
     return  output;
-
 };
-
 
 bool MyConfig::SetConfig(uint8_t* buffer,size_t length)
 {
@@ -88,7 +78,6 @@ bool MyConfig::SetConfig(uint8_t* buffer,size_t length)
     return true;
 
 }
-
 
 //Debugging Methods
 void MyConfig::DisplaySettings()
@@ -122,7 +111,7 @@ const char*  MyConfig::GetSSID()
  return this->jsonDoc[Keys_SSID];
 };
 const char*  MyConfig::GetSSIDPassword()
-{
+{      
  return this->jsonDoc[Keys_SSID_PASSWORD];
 };
 const char*  MyConfig::GetNTPServer()
@@ -131,7 +120,17 @@ const char*  MyConfig::GetNTPServer()
 }
 int    MyConfig::GetTimeZoneOffsetSeconds()
 {
- return this->jsonDoc[Keys_TIMEZONE_OFFSET_SECONDS];
+
+  String zoneStr = this->jsonDoc[Keys_TIMEZONE_OFFSET_SECONDS];
+  char chArray[sizeof(zoneStr)];
+  zoneStr.toCharArray(chArray, sizeof(zoneStr));
+  int comma1Idx = zoneStr.indexOf(",");
+  char sign = chArray[comma1Idx+1];
+  int comma2Idx = comma1Idx+2;
+  String zoneOffsetSecondsStr  =  zoneStr.substring(comma2Idx+1,zoneStr.length());
+  int offsetSeconds = zoneOffsetSecondsStr.toInt();
+  return(sign=='-' ? (-1 * offsetSeconds) : offsetSeconds);
+
 };
 int MyConfig::GetDstOffsetSeconds()
 {

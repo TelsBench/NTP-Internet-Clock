@@ -22,7 +22,6 @@ class MyConfig
 
     private:
     StaticJsonDocument<1024> jsonDoc;
-
     const int configEpromAddress = 0;
 
     public:

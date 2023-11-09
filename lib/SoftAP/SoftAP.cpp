@@ -17,13 +17,9 @@ SoftAP::SoftAP(MyDisplay &mydisplay){
      myScreen= mydisplay;
 
      mydisplay.tftSetup();
-     mydisplay.displayConnectStatus("go to hell");
-
-
 }
 
 MyConfig apconfig;
-
 
 void SoftAP::DebugMessage( String msg, bool newline)
 {  
@@ -37,6 +33,7 @@ void SoftAP::DebugMessage( String msg, bool newline)
      sentDefaultsAlready=false;
  }
 
+int HelpMe;
 void webSocketEvent(byte num, WStype_t type, uint8_t * payload, size_t length) {   
   switch (type) 
   {                            
@@ -53,9 +50,7 @@ void webSocketEvent(byte num, WStype_t type, uint8_t * payload, size_t length) {
       Serial.println("** PAYLOAD LENGTH : " + length);
       apconfig.DisplaySettings();
       apconfig.DumpEEPROM(500);
-      Serial.println("** REBOOTING IN 3 Seconds **");
-      delay(3000);
-      esp_restart();
+      requestReboot=true;
       break;
 
     case WStype_ERROR:
@@ -85,9 +80,7 @@ void SoftAP::StartServer()
 {
   
   // Connect to Wi-Fi network with SSID and password
-  Serial.print("Setting AP (Access Point)…");
-
-  WiFi.softAP("ESP32-Clock-Server","12345678");
+  WiFi.softAP(SOFT_ROUTER_ID,SOFT_ROUTER_PASSWORD);
   IPAddress local_ip(192,168,4,1);
   IPAddress gateway(192,168,4,1);
   IPAddress subnet(255,255,255,0);
@@ -109,10 +102,8 @@ void SoftAP::StartServer()
 
   DebugMessage("WEB Server Started",true);
   int count;
-  String str = String (testJsonConfig);
-
-    apconfig.DisplaySettings();
-    apconfig.DumpEEPROM(500);
+  apconfig.DisplaySettings();
+  apconfig.DumpEEPROM(500);
    
   while(!requestReboot)
   {
@@ -133,9 +124,12 @@ void SoftAP::StartServer()
 
   }
 
-
- 
-
+  myScreen.displayRebootInfo();
+  //Wait intil user has read the message on screen and pressed the Config Button
+  //to retart the clock
+  while(digitalRead(GPIO_NUM_15)!=LOW){};
+   esp_restart();
+   while(1){};
 
 
 };
