@@ -86,7 +86,8 @@ void MyDisplay::updateScreen(unsigned long epochTime, uint8_t day, bool showColo
     displayDateInfoString(myHelpers.string2char(currentDateInfo));
 }
 
- void MyDisplay::displayRemoteConfig( String ipAddress )
+//Added in for Episode 2 Remote Web Config
+void MyDisplay::displayRemoteConfig( String ipAddress )
  {
   Serial.println("** IN INITIAL SETUP **");
   clearScreen();
@@ -106,6 +107,7 @@ void MyDisplay::updateScreen(unsigned long epochTime, uint8_t day, bool showColo
   tft->print(ipAddress);  
  }
 
+ //Added in for Episode 2 Remote Web Config
  void MyDisplay::displayRebootInfo()
  {
   clearScreen();
