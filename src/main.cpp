@@ -31,8 +31,6 @@ SOFTWARE.
 #include "SoftAP.h"
 #include <WebSockets.h>
 
-
-
 //private lib declarations under the project directory hence the quote marks for a local search.
 MyHelpers myHelpers;
 MyDisplay myScreen;
@@ -40,13 +38,8 @@ MyConfig config;
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP);
 
-/*   DEFINES    */
-//Router
-// #define ssid  "BTHub6-6GWX"
-// #define password "KadLn3rJwX6r"
-
-#define DST_SWITCH  GPIO_NUM_19  // Daylight Saving Switch input GPIO Pin.
-#define DO_CONFIG   GPIO_NUM_15 // Press before power, clock will go into SoftAP mode and allow config via a web browser.
+#define DST_SWITCH  GPIO_NUM_19 // Daylight Saving Switch input GPIO Pin.
+#define DO_CONFIG   GPIO_NUM_15 // Press before Power On/Reset, clock will go into SoftAP mode and allow config via a web browser.
 
 // Main Loop Control
 bool firstTime = true;
@@ -58,60 +51,42 @@ bool showColon = true;
 int  LastKnownDSTSWITCH=LOW;
 
 
-/***************************************************/
-
-
-
 bool GetConncted(){
 
   const int GETTING_CONNECTED_MAX_TRIES=30;
   int CONNECT_TRY_COUNT =0;
-   bool isConnected = false;
-   String hostname = "TELs ESP32 CLOCK";
-   WiFi.setHostname(hostname.c_str());
-
-  //Future Revisions will set this via the web
+  bool isConnected = false;
+  String hostname = "TELs ESP32 CLOCK";
+  WiFi.setHostname(hostname.c_str());
   WiFi.begin(config.GetSSID(), config.GetSSIDPassword());  
    
   while(CONNECT_TRY_COUNT++<GETTING_CONNECTED_MAX_TRIES){
-     int count=0;
-    
-     myScreen.displayConnectStatus(myHelpers.string2char("Trying to connect..."));
-     delay (1000 ); 
-
-     if( WiFi.status() == WL_CONNECTED) 
-     { 
-        myScreen.displayConnectStatus(myHelpers.string2char("You are Connected..."));
-        delay (1000 ); 
-        isConnected = true;
-        break;
-     }
-
+   int count=0;
+   myScreen.displayConnectStatus(myHelpers.string2char("Trying to connect..."));
+   delay (1000 ); 
+   if( WiFi.status() == WL_CONNECTED) 
+   { 
+      myScreen.displayConnectStatus(myHelpers.string2char("You are Connected..."));
+      delay (1000 ); 
+      isConnected = true;
+      break;
+   }
   }
 
   return isConnected; 
-
 }
 
 void setup(void) {
 
+   //External pullup resistors may be required
    pinMode(DO_CONFIG,INPUT_PULLUP);
    pinMode(DST_SWITCH,INPUT_PULLUP); 
 
   //Enables debugging print statements
    Serial.begin(115200);
-
    EEPROM.begin(1024);
    
-   //Clear, Dump and Wait
-   // config.ClearEEPROM();
-   // while(1){};
-
-   Serial.println("** STARTUP EEPROM DUMP");
-   config.DumpEEPROM(500);
-   //Serial.println("** STOPPED - main.cpp#103 Comment for normal ops");while(1){}; 
-
-   //When power applied if button depressed, clock will go into softAP mode for config from web browser
+   //When power applied if config button depressed, clock will go into softAP mode for config from web browser
    bool doRemoteConfig = !digitalRead(DO_CONFIG);
    if(doRemoteConfig || !config.ConfigExists() || !config.HasCredentials()){
 
@@ -125,38 +100,31 @@ void setup(void) {
       }
 
       SoftAP softserver(myScreen);
-      WiFi.setMinSecurity(WIFI_AUTH_WPA2_WPA3_PSK); //This is important as we are passing the router credentials over the air.
+      //This is important as we are passing the router credentials over the air.
+      WiFi.setMinSecurity(WIFI_AUTH_WPA2_WPA3_PSK); 
       softserver.StartServer();
    }
    
-
-
+   //Retreive Settinsg fomr EEPROM for use
    config.ReadConfigFromEEPROM();
-    
-   config.DumpEEPROM(1024);
- 
-   config.DisplaySettings();
-  
+   
+   //Setup Screen.
+   myScreen.tftSetup();
+   myScreen.clearScreen();
 
-
-  //Setup Screen and Config.
-  myScreen.tftSetup();
-  myScreen.clearScreen();
-
-  //Display the DST Switch Position
-  int switchValue = digitalRead(DST_SWITCH);
-  String message="";
-  if(switchValue==HIGH)
-  {
-    message="DST SWITCH SET = ON.";
-    myScreen.displayConnectStatus(myHelpers.string2char(message));
+   //Display the DST Switch Position
+   int switchValue = digitalRead(DST_SWITCH);
+   String message="";
+   if(switchValue==HIGH)
+   {
+      message="DST SWITCH SET = ON.";
+      myScreen.displayConnectStatus(myHelpers.string2char(message));
    }
-  else
-  {
-    message = "DST SWITCH SET = OFF.";
-    myScreen.displayConnectStatus(myHelpers.string2char(message));
-  }
-
+   else
+   {
+      message = "DST SWITCH SET = OFF.";
+      myScreen.displayConnectStatus(myHelpers.string2char(message));
+   }
 
    //Attempt Connection.
    if(!GetConncted()) 
@@ -172,30 +140,26 @@ void setup(void) {
       myScreen.displayConnectStatus(myHelpers.string2char("WIFI Connected."));
       NTPClient timeClient(ntpUDP,config.GetNTPServer());
       timeClient.begin();
-
    }
 }
 
-//During summer Offset needs to be applied to the time. IE Winter @6PM changes to 7PM after summer tranition.
+//Winter may need an offset depending on location.
 //DST Pin will be HIGH for summer time ( no added offset )
 void DSTCHECK(){
    myScreen.clearScreen();
-   int currentDSTSwitchState =  digitalRead(DST_SWITCH);
-   
+   int currentDSTSwitchState =  digitalRead(DST_SWITCH);   
    long totalOffsetSeconds = config.GetDstOffsetSeconds() + config.GetTimeZoneOffsetSeconds();
-
-   Serial.println("** TIMEZONE SECONDS :" + config.GetTimeZoneOffsetSeconds());
 
    //Display DST Switch position.
    if( digitalRead(DST_SWITCH)==HIGH) 
    {
-       myScreen.displayConnectStatus(myHelpers.string2char("Daylight savings-ON"));
+      myScreen.displayConnectStatus(myHelpers.string2char("Daylight savings-ON"));
       timeClient.setTimeOffset(totalOffsetSeconds); 
    }
    else
    {
-       myScreen.displayConnectStatus(myHelpers.string2char("Daylight savings-OFF"));
-        timeClient.setTimeOffset(config.GetTimeZoneOffsetSeconds()); 
+      myScreen.displayConnectStatus(myHelpers.string2char("Daylight savings-OFF"));
+      timeClient.setTimeOffset(config.GetTimeZoneOffsetSeconds()); 
    }
    LastKnownDSTSWITCH = currentDSTSwitchState;
 
@@ -208,10 +172,8 @@ void DSTCHECK(){
    myScreen.updateScreen(timeClient.getEpochTime(),timeClient.getDay(),showColon); 
 }
 
-
-void loop() {
-
-
+void loop() 
+{
   //DSTCHECK on Startup or when Position Changes of DST Swtich.
   if( firstTime || (LastKnownDSTSWITCH != digitalRead(DST_SWITCH))) 
   { 
