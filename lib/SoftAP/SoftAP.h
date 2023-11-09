@@ -33,6 +33,7 @@ class SoftAP
 
   private:
   const char*  SOFT_ROUTER_ID       = "ESP32-NTP-CLOCK";
+  //You should change this password from this default to something memorable 
   const char*  SOFT_ROUTER_PASSWORD = "12345678";
 
   public:
