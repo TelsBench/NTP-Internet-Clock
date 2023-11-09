@@ -3,7 +3,6 @@
 #include <ArduinoJson.h>
 #include <WiFiUdp.h>
 #include <StreamUtils.h>
-
      
 #define Keys_SSID "ssid"
 #define Keys_SSID_PASSWORD "sspassword"
@@ -13,13 +12,14 @@
 #define Keys_DST_OFFSET_SECONDS  "dstoffsetseconds" 
 #define Keys_VersionNumber  "versionnumber"  
 
-
+//A Randum integer used to indicate that a config exists
 #define ConfigNumber  2012709
+//A 10 byte offset to allow control data to be stored at the start of the EEPROM Space.
+//Actual Config Data is stored thereafter.
 #define EEPROM_OFFSET 10
 
 class MyConfig
 {
-
     private:
     StaticJsonDocument<1024> jsonDoc;
     const int configEpromAddress = 0;
