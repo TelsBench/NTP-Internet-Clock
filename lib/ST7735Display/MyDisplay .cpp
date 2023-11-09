@@ -95,30 +95,33 @@ void MyDisplay::updateScreen(unsigned long epochTime, uint8_t day, bool showColo
   //Print Browser Logon
   tft->fillRect(0,8,160,8,ST77XX_BLACK);
   tft->setTextColor(ST7735_GREEN, ST7735_BLACK);
+  tft->setTextSize(1);
   tft->setCursor(5, 8);   
-  tft->setTextSize(1);
-  tft->print("** LOGON BROWSER **");  
-
-  //Print IP Address.
-  tft->setCursor(5, 16);   
-  tft->setTextSize(1);
+  tft->print("* Set Laptop WiFi to .. ");  
+  tft->setCursor(5, 20);  
+  tft->print("ESP-NTP-CLOCK");  
+  tft->setCursor(5, 40);  
+  tft->print("* Browse to ..");  
+  tft->setCursor(5, 52);   
   tft->print(ipAddress);  
  }
 
  void MyDisplay::displayRebootInfo()
  {
-  Serial.println("** IN INITIAL SETUP **");
   clearScreen();
   tftSetup();
-
   //Print Browser Logon
   tft->fillRect(0,8,160,8,ST77XX_BLACK);
   tft->setTextColor(ST7735_GREEN, ST7735_BLACK);
   tft->setCursor(5, 8);   
   tft->setTextSize(1);
-  tft->print("#1 Comp/Fone to regular WiFi *");  
-  tft->setCursor(5, 16);   
-  tft->setTextSize(1);
-  tft->print("#2 Prss Cfg Btn->reboot Clock");  
-  return;
+  tft->print("* Set Laptop to..*"); 
+  tft->setCursor(5, 20);   
+  tft->print("* Regular WiFi");  
+  tft->setCursor(5, 32);   
+  tft->print("* Push Config Button.."); 
+  tft->setCursor(5, 44);   
+  tft->print("* to reboot Clock."); 
+
+   return;
  }
