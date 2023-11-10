@@ -78,7 +78,7 @@ bool GetConncted(){
 
 void setup(void) {
 
-   //External pullup resistors may be required
+   //External 10K pullup resistors may be required
    pinMode(DO_CONFIG,INPUT_PULLUP);
    pinMode(DST_SWITCH,INPUT_PULLUP); 
 
@@ -87,6 +87,8 @@ void setup(void) {
    EEPROM.begin(1024);
    
    //When power applied if config button depressed, clock will go into softAP mode for config from web browser
+   //This is to prevent this going back into config at the end of a config session as wel check the button here.
+   delay(1000);
    bool doRemoteConfig = !digitalRead(DO_CONFIG);
    if(doRemoteConfig || !config.ConfigExists() || !config.HasCredentials()){
 
