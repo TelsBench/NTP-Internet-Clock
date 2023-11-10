@@ -174,6 +174,14 @@ void DSTCHECK(){
 
 void loop() 
 {
+
+  //Quick Press Results in Rest LONG Press results in Reset AND Config
+  if(digitalRead(GPIO_NUM_15)==LOW)
+  {
+    esp_restart();
+    while(1){};
+  }
+
   //DSTCHECK on Startup or when Position Changes of DST Swtich.
   if( firstTime || (LastKnownDSTSWITCH != digitalRead(DST_SWITCH))) 
   { 
